@@ -1,0 +1,65 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Outfit Recommender</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2em;
+    }
+    input, button {
+      padding: 0.5em;
+      font-size: 1em;
+      margin-top: 1em;
+    }
+    #result {
+      margin-top: 2em;
+      font-size: 1.2em;
+    }
+    a {
+      display: block;
+      margin-top: 0.5em;
+      color: #0073e6;
+      font-weight: bold;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <h2>🧥 Weather-Based Outfit Recommender</h2>
+  <input type="text" id="city" placeholder="Enter city name">
+  <button onclick="getOutfit()">Get My Outfit</button>
+  <div id="result"></div>
+
+  <script>
+    const backendUrl = "YOUR_APPS_SCRIPT_DEPLOYMENT_URL";
+
+    function getOutfit() {
+      const city = document.getElementById("city").value;
+      document.getElementById("result").innerHTML = "⏳ Getting your outfit...";
+
+      fetch(backendUrl, {
+        method: 'POST',
+        body: JSON.stringify({ city: city }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(res => res.json())
+      .then(response => {
+        const links = (response.images || []).map(url =>
+          `<a href="\${url}" target="_blank">📷 View Outfit Image</a>`
+        ).join("");
+        document.getElementById("result").innerHTML =
+          `<p>\${response.text}</p>\${links}`;
+      })
+      .catch(err => {
+        document.getElementById("result").innerHTML = "❌ Error loading outfit.";
+        console.error(err);
+      });
+    }
+  </script>
+</body>
+</html>
